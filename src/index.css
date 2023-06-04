@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply cursor-pointer border border-solid border-gray-300 px-3.5 py-1.5 font-sans text-base text-gray-700 outline-none;
+  }
+
+  .btn:hover {
+    @apply bg-gray-100 text-gray-900;
+  }
+
+  .btn_primary {
+    @apply border-orange-600 bg-orange-600 text-white;
+  }
+
+  .btn_primary:hover {
+    @apply border-orange-700 bg-orange-700 text-white;
+  }
+
+  .btn_primary:focus-visible {
+    @apply shadow-sm;
+  }
+
+  .btn_text {
+    @apply border-none text-gray-900;
+  }
+
+  .btn_text:hover {
+    @apply border-none text-gray-900;
+  }
+}
