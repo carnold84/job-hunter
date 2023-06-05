@@ -1,6 +1,6 @@
 import localforage from "localforage";
 
-import { Job } from "../types";
+import { Job, JobCreate, JobUpdate } from "../types";
 
 const store = localforage.createInstance({
   name: "job-hunter",
@@ -22,10 +22,19 @@ export const getAll = async (): Promise<GetAllResponse> => {
       store
         .getItem("jobs")
         .then((jobs) => {
-          resolve({
-            data: (jobs as Job[]) || [],
-            status: "success",
-          });
+          if (jobs === null) {
+            store.setItem("jobs", []).then(() => {
+              resolve({
+                data: [],
+                status: "success",
+              });
+            });
+          } else {
+            resolve({
+              data: (jobs as Job[]) || [],
+              status: "success",
+            });
+          }
         })
         .catch((err) => {
           reject(err);
@@ -84,9 +93,7 @@ export const deleteJob = async (jobId: string): Promise<Response> => {
   });
 };
 
-export const createJob = async (
-  job: Omit<Job, "id" | "createdAt">
-): Promise<Response> => {
+export const createJob = async (job: JobCreate): Promise<Response> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       store
@@ -98,6 +105,7 @@ export const createJob = async (
             ...job,
             createdAt: date.toISOString(),
             id: date.getTime().toString(),
+            updatedAt: date.toISOString(),
           };
           const nextJobs = [...jobs, newJob];
 
@@ -106,6 +114,51 @@ export const createJob = async (
             .then(() => {
               resolve({
                 data: newJob,
+                status: "success",
+              });
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    }, 500);
+  });
+};
+
+export const updateJob = async (
+  id: string,
+  job: JobUpdate
+): Promise<Response> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      store
+        .getItem("jobs")
+        .then((response) => {
+          const jobs = response as Job[];
+
+          let updatedJob: Job;
+          const nextJobs = jobs.map((existingJob) => {
+            if (id === existingJob.id) {
+              updatedJob = {
+                ...existingJob,
+                ...job,
+                updatedAt: new Date().toISOString(),
+              };
+            }
+
+            return existingJob;
+          });
+
+          console.log(jobs);
+
+          store
+            .setItem("jobs", nextJobs)
+            .then(() => {
+              resolve({
+                data: updatedJob,
                 status: "success",
               });
             })

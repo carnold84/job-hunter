@@ -2,7 +2,7 @@ import Loading from "../Loading";
 
 const LoadingScreen = () => {
   return (
-    <div className="absolute flex h-full w-full items-center justify-center">
+    <div className="absolute z-10 flex h-full w-full items-center justify-center bg-white/75">
       <Loading />
     </div>
   );

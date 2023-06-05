@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
+import LoadingScreen from "../../components/LoadingScreen";
 import Modal from "../../components/Modal";
 import useDeleteJob from "../../hooks/useDeleteJob";
 import { Job } from "../../types";
@@ -12,7 +13,7 @@ interface Props {
 
 const ConfirmDeleteModal = ({ job, onCloseEnd, show }: Props) => {
   const navigate = useNavigate();
-  const { deleteJob } = useDeleteJob();
+  const { deleteJob, isLoading } = useDeleteJob();
 
   const onClose = () => {
     navigate(-1);
@@ -29,13 +30,9 @@ const ConfirmDeleteModal = ({ job, onCloseEnd, show }: Props) => {
   };
 
   return (
-    <Modal
-      onClose={onClose}
-      onCloseEnd={onCloseEnd}
-      show={show}
-      title={`Delete ${job?.title}?`}
-      width="sm"
-    >
+    <Modal onClose={onClose} onCloseEnd={onCloseEnd} show={show} width="sm">
+      {isLoading && <LoadingScreen />}
+      <Modal.Header>Delete {job?.title}</Modal.Header>
       <p className="px-8">Are you sure you want to delete {job?.title}?</p>
       <div className="flex justify-end gap-5 p-5">
         <button className="btn btn_text" type="button" onClick={onClose}>

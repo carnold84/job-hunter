@@ -5,13 +5,12 @@ import emptyImage from "../../assets/empty.svg";
 import LoadingScreen from "../../components/LoadingScreen";
 import useJob from "../../hooks/useJob";
 import useJobs from "../../hooks/useJobs";
-import ToastManager from "../../managers/ToastManager";
 import ConfirmDeleteModal from "../../modals/ConfirmDeleteModal";
 import JobModal from "../../modals/JobModal";
 import formatDate from "../../utils/formatDate";
 import toSentenceCase from "../../utils/toSentenceCase";
 
-const HomePage = () => {
+const JobPage = () => {
   const [searchParams] = useSearchParams();
   const modals = searchParams.get("modals");
   const id = searchParams.get("id");
@@ -167,9 +166,8 @@ const HomePage = () => {
         onCloseEnd={onCloseEnd}
         show={modals?.includes("delete") === true}
       />
-      <ToastManager />
     </>
   );
 };
 
-export default HomePage;
+export default JobPage;

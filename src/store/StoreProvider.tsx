@@ -8,6 +8,7 @@ export enum Actions {
   DELETE_JOB = "DELETE_JOB",
   FETCH_JOBS = "FETCH_JOBS",
   REMOVE_TOAST = "REMOVE_TOAST",
+  UPDATE_JOB = "UPDATE_JOB",
 }
 
 interface State {
@@ -40,12 +41,18 @@ type RemoveToastAction = {
   type: typeof Actions.REMOVE_TOAST;
 };
 
+type UpdateJobAction = {
+  job: Job;
+  type: typeof Actions.UPDATE_JOB;
+};
+
 type ActionTypes =
   | AddToastAction
   | CreateJobAction
   | DeleteJobAction
   | FetchJobsAction
-  | RemoveToastAction;
+  | RemoveToastAction
+  | UpdateJobAction;
 
 interface Props {
   children: ReactNode;
@@ -81,6 +88,17 @@ const reducer = (state: State, action: ActionTypes) => {
       return {
         ...state,
         toasts: state.toasts.filter((toast) => toast.id !== action.id),
+      };
+
+    case Actions.UPDATE_JOB:
+      return {
+        ...state,
+        jobs: state.jobs.map((job) => {
+          if (job.id === action.job.id) {
+            return action.job;
+          }
+          return job;
+        }),
       };
 
     default:

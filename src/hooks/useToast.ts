@@ -1,12 +1,12 @@
 import { useContext } from "react";
 
 import { Actions, StoreContext } from "../store/StoreProvider";
-import { Toast } from "../types";
+import { ToastCreate } from "../types";
 
 const useToast = () => {
   const [, dispatch] = useContext(StoreContext);
 
-  const addToast = (toast: Omit<Toast, "id">) => {
+  const addToast = (toast: ToastCreate) => {
     const nextToast = {
       ...toast,
       id: new Date().getTime().toString(),

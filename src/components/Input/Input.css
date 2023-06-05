@@ -1,0 +1,11 @@
+.input {
+  @apply border border-transparent bg-transparent py-1 focus:outline-none;
+}
+
+.input:not(:read-only) {
+  @apply border-gray-300 px-2 focus-visible:border-orange-600 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300;
+}
+
+.input:not(:read-only)[type="date"] {
+  @apply pb-1 pt-2;
+}

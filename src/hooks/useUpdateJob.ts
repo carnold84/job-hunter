@@ -2,19 +2,20 @@ import { useContext, useState } from "react";
 
 import api from "../api";
 import { Actions, StoreContext } from "../store/StoreProvider";
+import { JobUpdate } from "../types";
 
-const useDeleteJob = () => {
+const useUpdateJob = () => {
   const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [, dispatch] = useContext(StoreContext);
 
-  const deleteJob = async (id: string) => {
+  const updateJob = async (id: string, job: JobUpdate) => {
     setIsLoading(true);
 
-    const response = await api.deleteJob(id);
+    const response = await api.updateJob(id, job);
 
     if (response.status === "success") {
-      dispatch({ id: response.data.id, type: Actions.DELETE_JOB });
+      dispatch({ job: response.data, type: Actions.UPDATE_JOB });
     } else {
       // TODO - handle errors
       console.log("There was an error");
@@ -29,10 +30,10 @@ const useDeleteJob = () => {
   };
 
   return {
-    deleteJob,
     isError,
     isLoading,
+    updateJob,
   };
 };
 
-export default useDeleteJob;
+export default useUpdateJob;

@@ -7,21 +7,29 @@ interface Props {
   onCloseEnd?: () => void;
   show: boolean;
   showCloseButton?: boolean;
-  title: string;
-  width?: "sm" | "md" | "lg";
+  width?: "sm" | "md" | "lg" | "xl";
 }
+
+const getWidthClass = (width: "sm" | "md" | "lg" | "xl") => {
+  if (width === "sm") {
+    return "max-w-lg";
+  } else if (width === "md") {
+    return "max-w-xl";
+  } else if (width === "lg") {
+    return "max-w-3xl";
+  } else {
+    return "max-w-4xl";
+  }
+};
 
 const Modal = ({
   children,
   onClose,
   onCloseEnd,
   show,
-  showCloseButton = true,
-  title,
   width = "lg",
 }: Props) => {
-  const widthClass =
-    width === "sm" ? "max-w-lg" : width === "md" ? "max-w-xl" : "max-w-3xl";
+  const widthClass = getWidthClass(width);
 
   return (
     <Transition show={show} as={Fragment}>
@@ -54,34 +62,7 @@ const Modal = ({
                 widthClass,
               ].join(" ")}
             >
-              <div className="mb-3 flex items-center justify-between px-8 pt-6">
-                <Dialog.Title className="text-2xl">{title}</Dialog.Title>
-                {showCloseButton && (
-                  <button
-                    className="flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-                    onClick={onClose}
-                  >
-                    <svg
-                      color="currentcolor"
-                      fill="none"
-                      height="20px"
-                      strokeWidth="2.5"
-                      viewBox="0 0 24 24"
-                      width="20px"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M6.758 17.243L12.001 12m5.243-5.243L12 12m0 0L6.758 6.757M12.001 12l5.243 5.243"
-                        stroke="currentcolor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2.5"
-                      ></path>
-                    </svg>
-                  </button>
-                )}
-              </div>
-              <div>{children}</div>
+              <div className="relative">{children}</div>
             </Dialog.Panel>
           </Transition.Child>
         </div>

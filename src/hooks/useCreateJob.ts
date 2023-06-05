@@ -2,14 +2,14 @@ import { useContext, useState } from "react";
 
 import api from "../api";
 import { Actions, StoreContext } from "../store/StoreProvider";
-import { Job } from "../types";
+import { JobCreate } from "../types";
 
 const useCreateJob = () => {
   const [isError, setIsError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [, dispatch] = useContext(StoreContext);
 
-  const createJob = async (job: Omit<Job, "id" | "createdAt">) => {
+  const createJob = async (job: JobCreate) => {
     setIsLoading(true);
 
     const response = await api.createJob(job);
@@ -23,7 +23,10 @@ const useCreateJob = () => {
     }
     setIsLoading(false);
 
-    return response;
+    return {
+      job: response.data,
+      status: response.status,
+    };
   };
 
   return {

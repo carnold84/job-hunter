@@ -2,24 +2,28 @@ import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import Input from "../../components/Input";
+import LoadingScreen from "../../components/LoadingScreen";
 import Modal from "../../components/Modal";
 import Select from "../../components/Select";
 import useCreateJob from "../../hooks/useCreateJob";
 import useToast from "../../hooks/useToast";
-import { ApplicationStatus, Job } from "../../types";
+import useUpdateJob from "../../hooks/useUpdateJob";
+import { ApplicationStatus, Job, JobCreate, JobUpdate } from "../../types";
 
-const defaultValues: Job = {
+type DefaultValues = Omit<Job, "createdAt" | "id" | "updatedAt">;
+
+const defaultValues: DefaultValues = {
   application: {
-    appliedAt: undefined,
+    appliedAt: null,
     status: null,
-    method: undefined,
+    method: null,
   },
-  createdAt: "",
-  id: "",
-  location: "",
-  poster: "",
+  location: null,
+  notes: null,
+  poster: null,
   status: "active",
-  title: "",
+  title: null,
+  url: null,
 };
 
 const statusOptions = [
@@ -49,21 +53,32 @@ const applicationStatusOptions = [
 ];
 
 interface Props {
+  action: string | null;
   job: Job | null;
   onCloseEnd?: () => void;
   show: boolean;
 }
 
-const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
-  const [formValues, setFormValues] = useState<Job>(defaultValues);
+const JobModal = ({
+  action = "view",
+  job,
+  onCloseEnd: onCloseEndProp,
+  show,
+}: Props) => {
+  const [formValues, setFormValues] = useState<DefaultValues>(defaultValues);
   const navigate = useNavigate();
-  const { createJob } = useCreateJob();
-  const { addToast, removeToast } = useToast();
+  const { createJob, isLoading } = useCreateJob();
+  const { updateJob } = useUpdateJob();
+  const { addToast } = useToast();
+  const isReadOnly = action === "view";
 
   useEffect(() => {
     if (job) {
       setFormValues({
         ...job,
+        application: {
+          ...job.application,
+        },
       });
     }
   }, [job]);
@@ -93,38 +108,57 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
     evt.preventDefault();
 
     if (formValues.title) {
-      const nextJob: Job = {
-        ...formValues,
-      };
+      if (job) {
+        const nextJob: JobUpdate = {
+          ...formValues,
+        };
 
-      const response = await createJob(nextJob);
+        const response = await updateJob(job.id, nextJob);
 
-      if (response.status === "success") {
-        addToast({
-          text: "Job added",
-          timeoutMS: 3000,
-          title: `${nextJob.title} was successfully added.`,
-          type: "success",
-        });
+        if (response.status === "success") {
+          addToast({
+            text: "Job updated",
+            timeoutMS: 3000,
+            title: `${response.job.title} was successfully updated.`,
+            type: "success",
+          });
 
-        onClose();
+          onClose();
+        }
+      } else {
+        const nextJob: JobCreate = {
+          ...formValues,
+        };
+
+        const response = await createJob(nextJob);
+
+        if (response.status === "success") {
+          addToast({
+            text: "Job added",
+            timeoutMS: 3000,
+            title: `${response.job.title} was successfully added.`,
+            type: "success",
+          });
+
+          onClose();
+        }
       }
     }
   };
 
   return (
-    <Modal
-      onClose={onClose}
-      onCloseEnd={onCloseEnd}
-      show={show}
-      title={job ? job.title : "New Job"}
-    >
+    <Modal onClose={onClose} onCloseEnd={onCloseEnd} show={show} width="xl">
+      {isLoading && <LoadingScreen />}
+      <Modal.Header onClose={onClose}>
+        {job ? job.title : "New Job"}
+      </Modal.Header>
       <form onSubmit={onSubmit}>
-        <div className="grid grid-cols-5 gap-5 px-8 pb-3">
+        <div className="grid grid-cols-5 gap-5 px-8 pb-8">
           <div className="col-span-3 grid content-start items-start gap-3">
             <h3 className="text-lg">Details</h3>
             <Input
               id="title"
+              isReadOnly={isReadOnly}
               label="Title"
               name="title"
               onChange={(evt) => onChange("title", evt.target.value)}
@@ -132,6 +166,7 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
             />
             <Input
               id="poster"
+              isReadOnly={isReadOnly}
               label="Company/Agency"
               name="poster"
               onChange={(evt) => onChange("poster", evt.target.value)}
@@ -139,6 +174,7 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
             />
             <Input
               id="location"
+              isReadOnly={isReadOnly}
               label="Location"
               name="location"
               onChange={(evt) => onChange("location", evt.target.value)}
@@ -153,7 +189,7 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
               }
             />
           </div>
-          <div className="col-span-2 grid content-start items-start gap-3">
+          <div className="col-span-2 grid content-start items-start gap-3 border border-gray-200 bg-gray-50 p-5">
             <h3 className="text-lg">Application</h3>
             <Select
               label="Status"
@@ -177,6 +213,7 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
             />
             <Input
               id="appliedAt"
+              isReadOnly={isReadOnly}
               label="Applied Date"
               name="appliedAt"
               onChange={(evt) => {
@@ -195,6 +232,7 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
             />
             <Input
               id="method"
+              isReadOnly={isReadOnly}
               label="Method"
               name="method"
               onChange={(evt) => {
@@ -212,14 +250,16 @@ const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
             />
           </div>
         </div>
-        <div className="flex justify-end gap-5 p-5">
-          <button className="btn btn_text" type="button" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="btn btn_primary" type="submit">
-            Create
-          </button>
-        </div>
+        {!isReadOnly && (
+          <div className="flex justify-end gap-5 px-5 pb-5">
+            <button className="btn btn_text" type="button" onClick={onClose}>
+              Cancel
+            </button>
+            <button className="btn btn_primary" type="submit">
+              Create
+            </button>
+          </div>
+        )}
       </form>
     </Modal>
   );

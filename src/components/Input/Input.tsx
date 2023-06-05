@@ -1,15 +1,26 @@
 import { ChangeEvent, HTMLInputTypeAttribute } from "react";
 
+import "./Input.css";
+
 interface Props {
   id: string;
   label?: string;
   name?: string;
   onChange?: (evt: ChangeEvent<HTMLInputElement>) => void;
+  isReadOnly?: boolean;
   type?: HTMLInputTypeAttribute;
-  value?: string;
+  value?: string | null;
 }
 
-const Input = ({ id, label, name, onChange, type = "text", value }: Props) => {
+const Input = ({
+  id,
+  isReadOnly = true,
+  label,
+  name,
+  onChange,
+  type = "text",
+  value,
+}: Props) => {
   return (
     <div className="grid gap-0.5">
       {label && (
@@ -18,14 +29,13 @@ const Input = ({ id, label, name, onChange, type = "text", value }: Props) => {
         </label>
       )}
       <input
-        className={`border border-gray-300 px-3 ${
-          type === "date" ? "pb-1.5 pt-2" : "py-2"
-        } text-sm focus:outline-none focus-visible:border-orange-600 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300`}
+        className="input"
         id={id}
         name={name}
         onChange={onChange}
+        readOnly={isReadOnly}
         type={type}
-        value={value}
+        value={value || ""}
       />
     </div>
   );
