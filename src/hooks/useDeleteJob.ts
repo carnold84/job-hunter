@@ -6,7 +6,7 @@ import { Actions, StoreContext } from "../store/StoreProvider";
 const useDeleteJob = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [state, dispatch] = useContext(StoreContext);
+  const [, dispatch] = useContext(StoreContext);
 
   const deleteJob = async (id: string) => {
     setIsLoading(true);

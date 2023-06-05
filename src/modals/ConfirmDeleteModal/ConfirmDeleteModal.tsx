@@ -1,33 +1,26 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Modal from "../../components/Modal";
 import useDeleteJob from "../../hooks/useDeleteJob";
-import useJob from "../../hooks/useJob";
+import { Job } from "../../types";
 
-const ConfirmDeleteModal = () => {
-  const [searchParams] = useSearchParams();
-  const modals = searchParams.get("modals");
-  const [id, setId] = useState(searchParams.get("id"));
+interface Props {
+  job: Job | null;
+  onCloseEnd?: () => void;
+  show: boolean;
+}
+
+const ConfirmDeleteModal = ({ job, onCloseEnd, show }: Props) => {
   const navigate = useNavigate();
-  const job = useJob(id);
   const { deleteJob } = useDeleteJob();
-
-  useEffect(() => {
-    const nextId = searchParams.get("id");
-
-    if (nextId !== null) {
-      setId(nextId);
-    }
-  }, [searchParams]);
 
   const onClose = () => {
     navigate(-1);
   };
 
   const onConfirm = async () => {
-    if (id) {
-      const response = await deleteJob(id);
+    if (job) {
+      const response = await deleteJob(job.id);
 
       if (response.status === "success") {
         onClose();
@@ -38,7 +31,8 @@ const ConfirmDeleteModal = () => {
   return (
     <Modal
       onClose={onClose}
-      show={modals?.includes("delete") === true}
+      onCloseEnd={onCloseEnd}
+      show={show}
       title={`Delete ${job?.title}?`}
       width="sm"
     >

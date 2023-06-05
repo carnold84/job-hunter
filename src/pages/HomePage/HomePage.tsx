@@ -1,16 +1,37 @@
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import LoadingScreen from "../../components/LoadingScreen";
+import Toast from "../../components/Toast";
+import useJob from "../../hooks/useJob";
 import useJobs from "../../hooks/useJobs";
+import ToastManager from "../../managers/ToastManager";
 import ConfirmDeleteModal from "../../modals/ConfirmDeleteModal";
 import JobModal from "../../modals/JobModal";
 import formatDate from "../../utils/formatDate";
 import toSentenceCase from "../../utils/toSentenceCase";
 
 const HomePage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
+  const modals = searchParams.get("modals");
+  const id = searchParams.get("id");
   const filters = searchParams.get("filter");
   const { isError, isLoading, jobs } = useJobs();
+  const job = useJob(id);
+  const [selectedJob, setSelectedJob] = useState(job);
+  const showJobModal =
+    modals?.includes("new") === true || modals?.includes("view") === true;
+
+  useEffect(() => {
+    if (job !== null) {
+      setSelectedJob(job);
+    }
+  }, [job]);
+
+  const onCloseEnd = () => {
+    console.log("onCloseEnd");
+    setSelectedJob(null);
+  };
 
   return (
     <>
@@ -114,8 +135,13 @@ const HomePage = () => {
           </div>
         )}
       </div>
-      <JobModal />
-      <ConfirmDeleteModal />
+      <JobModal job={selectedJob} onCloseEnd={onCloseEnd} show={showJobModal} />
+      <ConfirmDeleteModal
+        job={selectedJob}
+        onCloseEnd={onCloseEnd}
+        show={modals?.includes("delete") === true}
+      />
+      <ToastManager />
     </>
   );
 };

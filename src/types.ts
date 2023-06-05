@@ -14,3 +14,12 @@ export interface Job {
   status: "active" | "expired";
   title: string;
 }
+
+export interface Toast {
+  canClose?: boolean;
+  id: string;
+  text?: string;
+  timeoutMS?: number;
+  title: string;
+  type?: "error" | "info" | "success" | "warning";
+}

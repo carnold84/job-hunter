@@ -4,6 +4,7 @@ import { Fragment, ReactNode } from "react";
 interface Props {
   children: ReactNode;
   onClose: () => void;
+  onCloseEnd?: () => void;
   show: boolean;
   showCloseButton?: boolean;
   title: string;
@@ -13,6 +14,7 @@ interface Props {
 const Modal = ({
   children,
   onClose,
+  onCloseEnd,
   show,
   showCloseButton = true,
   title,
@@ -20,6 +22,7 @@ const Modal = ({
 }: Props) => {
   const widthClass =
     width === "sm" ? "max-w-lg" : width === "md" ? "max-w-xl" : "max-w-3xl";
+
   return (
     <Transition show={show} as={Fragment}>
       <Dialog className="relative z-50" onClose={onClose}>
@@ -36,6 +39,7 @@ const Modal = ({
         </Transition.Child>
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Transition.Child
+            afterLeave={onCloseEnd}
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0 scale-95"

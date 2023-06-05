@@ -84,7 +84,9 @@ export const deleteJob = async (jobId: string): Promise<Response> => {
   });
 };
 
-export const createJob = async (job: Partial<Job>): Promise<Response> => {
+export const createJob = async (
+  job: Omit<Job, "id" | "createdAt">
+): Promise<Response> => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       store
@@ -94,11 +96,8 @@ export const createJob = async (job: Partial<Job>): Promise<Response> => {
           const date = new Date();
           const newJob: Job = {
             ...job,
-            application: job.application ?? { status: null },
             createdAt: date.toISOString(),
             id: date.getTime().toString(),
-            status: job.status ?? "active",
-            title: job.title ?? "",
           };
           const nextJobs = [...jobs, newJob];
 

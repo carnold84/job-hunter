@@ -1,15 +1,18 @@
 import { ReactNode, createContext, useReducer } from "react";
 
-import { Job } from "../types";
+import { Job, Toast } from "../types";
 
 export enum Actions {
+  ADD_TOAST = "ADD_TOAST",
   CREATE_JOB = "CREATE_JOB",
   DELETE_JOB = "DELETE_JOB",
   FETCH_JOBS = "FETCH_JOBS",
+  REMOVE_TOAST = "REMOVE_TOAST",
 }
 
 interface State {
   jobs: Job[];
+  toasts: Toast[];
 }
 
 type CreateJobAction = {
@@ -27,7 +30,22 @@ type FetchJobsAction = {
   type: typeof Actions.FETCH_JOBS;
 };
 
-type ActionTypes = CreateJobAction | DeleteJobAction | FetchJobsAction;
+type AddToastAction = {
+  toast: Toast;
+  type: typeof Actions.ADD_TOAST;
+};
+
+type RemoveToastAction = {
+  id: string;
+  type: typeof Actions.REMOVE_TOAST;
+};
+
+type ActionTypes =
+  | AddToastAction
+  | CreateJobAction
+  | DeleteJobAction
+  | FetchJobsAction
+  | RemoveToastAction;
 
 interface Props {
   children: ReactNode;
@@ -35,6 +53,12 @@ interface Props {
 
 const reducer = (state: State, action: ActionTypes) => {
   switch (action.type) {
+    case Actions.ADD_TOAST:
+      return {
+        ...state,
+        toasts: [...state.toasts, action.toast],
+      };
+
     case Actions.CREATE_JOB:
       return {
         ...state,
@@ -53,6 +77,12 @@ const reducer = (state: State, action: ActionTypes) => {
         jobs: action.jobs,
       };
 
+    case Actions.REMOVE_TOAST:
+      return {
+        ...state,
+        toasts: state.toasts.filter((toast) => toast.id !== action.id),
+      };
+
     default:
       throw new Error();
   }
@@ -60,11 +90,12 @@ const reducer = (state: State, action: ActionTypes) => {
 
 const initialState: State = {
   jobs: [],
+  toasts: [],
 };
 
 export const StoreContext = createContext<[State, React.Dispatch<ActionTypes>]>(
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  [{ jobs: [] }, () => {}]
+  [{ jobs: [], toasts: [] }, () => {}]
 );
 
 const StoreProvider = ({ children }: Props) => {

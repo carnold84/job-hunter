@@ -1,10 +1,11 @@
-import { FormEvent, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { FormEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Input from "../../components/Input";
 import Modal from "../../components/Modal";
 import Select from "../../components/Select";
 import useCreateJob from "../../hooks/useCreateJob";
+import useToast from "../../hooks/useToast";
 import { ApplicationStatus, Job } from "../../types";
 
 const defaultValues: Job = {
@@ -47,13 +48,25 @@ const applicationStatusOptions = [
   },
 ];
 
-const JobModal = () => {
-  const [searchParams] = useSearchParams();
-  const modals = searchParams.get("modals");
-  const id = searchParams.get("id");
+interface Props {
+  job: Job | null;
+  onCloseEnd?: () => void;
+  show: boolean;
+}
+
+const JobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
   const [formValues, setFormValues] = useState<Job>(defaultValues);
   const navigate = useNavigate();
   const { createJob } = useCreateJob();
+  const { addToast, removeToast } = useToast();
+
+  useEffect(() => {
+    if (job) {
+      setFormValues({
+        ...job,
+      });
+    }
+  }, [job]);
 
   const onChange = (key: string, value: string) => {
     setFormValues((prev) => {
@@ -65,8 +78,15 @@ const JobModal = () => {
   };
 
   const onClose = () => {
-    setFormValues(defaultValues);
     navigate(-1);
+  };
+
+  const onCloseEnd = () => {
+    setFormValues(defaultValues);
+
+    if (onCloseEndProp) {
+      onCloseEndProp();
+    }
   };
 
   const onSubmit = async (evt: FormEvent<HTMLFormElement>) => {
@@ -80,6 +100,13 @@ const JobModal = () => {
       const response = await createJob(nextJob);
 
       if (response.status === "success") {
+        addToast({
+          text: "Job added",
+          timeoutMS: 3000,
+          title: `${nextJob.title} was successfully added.`,
+          type: "success",
+        });
+
         onClose();
       }
     }
@@ -88,8 +115,9 @@ const JobModal = () => {
   return (
     <Modal
       onClose={onClose}
-      show={modals?.includes("new") === true}
-      title="New Job"
+      onCloseEnd={onCloseEnd}
+      show={show}
+      title={job ? job.title : "New Job"}
     >
       <form onSubmit={onSubmit}>
         <div className="grid grid-cols-5 gap-5 px-8 pb-3">

@@ -7,9 +7,9 @@ import { Job } from "../types";
 const useCreateJob = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [state, dispatch] = useContext(StoreContext);
+  const [, dispatch] = useContext(StoreContext);
 
-  const createJob = async (job: Partial<Job>) => {
+  const createJob = async (job: Omit<Job, "id" | "createdAt">) => {
     setIsLoading(true);
 
     const response = await api.createJob(job);
