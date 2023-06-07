@@ -53,24 +53,17 @@ const applicationStatusOptions = [
 ];
 
 interface Props {
-  action: string | null;
   job: Job | null;
   onCloseEnd?: () => void;
   show: boolean;
 }
 
-const JobModal = ({
-  action = "view",
-  job,
-  onCloseEnd: onCloseEndProp,
-  show,
-}: Props) => {
+const EditJobModal = ({ job, onCloseEnd: onCloseEndProp, show }: Props) => {
   const [formValues, setFormValues] = useState<DefaultValues>(defaultValues);
   const navigate = useNavigate();
   const { createJob, isLoading } = useCreateJob();
   const { updateJob } = useUpdateJob();
   const { addToast } = useToast();
-  const isReadOnly = action === "view";
 
   useEffect(() => {
     if (job) {
@@ -158,7 +151,6 @@ const JobModal = ({
             <h3 className="text-lg">Details</h3>
             <Input
               id="title"
-              isReadOnly={isReadOnly}
               label="Title"
               name="title"
               onChange={(evt) => onChange("title", evt.target.value)}
@@ -166,7 +158,6 @@ const JobModal = ({
             />
             <Input
               id="poster"
-              isReadOnly={isReadOnly}
               label="Company/Agency"
               name="poster"
               onChange={(evt) => onChange("poster", evt.target.value)}
@@ -174,7 +165,6 @@ const JobModal = ({
             />
             <Input
               id="location"
-              isReadOnly={isReadOnly}
               label="Location"
               name="location"
               onChange={(evt) => onChange("location", evt.target.value)}
@@ -213,7 +203,6 @@ const JobModal = ({
             />
             <Input
               id="appliedAt"
-              isReadOnly={isReadOnly}
               label="Applied Date"
               name="appliedAt"
               onChange={(evt) => {
@@ -232,7 +221,6 @@ const JobModal = ({
             />
             <Input
               id="method"
-              isReadOnly={isReadOnly}
               label="Method"
               name="method"
               onChange={(evt) => {
@@ -250,19 +238,17 @@ const JobModal = ({
             />
           </div>
         </div>
-        {!isReadOnly && (
-          <div className="flex justify-end gap-5 px-5 pb-5">
-            <button className="btn btn_text" type="button" onClick={onClose}>
-              Cancel
-            </button>
-            <button className="btn btn_primary" type="submit">
-              Create
-            </button>
-          </div>
-        )}
+        <div className="flex justify-end gap-5 px-5 pb-5">
+          <button className="btn btn_text" type="button" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn btn_primary" type="submit">
+            Create
+          </button>
+        </div>
       </form>
     </Modal>
   );
 };
 
-export default JobModal;
+export default EditJobModal;

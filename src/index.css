@@ -4,11 +4,15 @@
 
 @layer components {
   .btn {
-    @apply cursor-pointer border border-solid border-gray-300 px-3.5 py-1.5 font-sans text-base text-gray-700 outline-none;
+    @apply flex cursor-pointer border border-solid border-gray-300 px-3.5 py-1.5 font-sans text-base text-gray-700 outline-none;
   }
 
   .btn:hover {
     @apply bg-gray-100 text-gray-900;
+  }
+
+  .btn:focus-visible {
+    @apply focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-3 focus-visible:ring-offset-gray-200;
   }
 
   .btn_primary {
@@ -20,7 +24,7 @@
   }
 
   .btn_primary:focus-visible {
-    @apply shadow-sm;
+    @apply focus-visible:border-orange-600 focus-visible:ring-4 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-3 focus-visible:ring-offset-orange-300;
   }
 
   .btn_text {
@@ -29,5 +33,17 @@
 
   .btn_text:hover {
     @apply border-none text-gray-900;
+  }
+
+  .btn_icon {
+    @apply flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-gray-500 outline-none;
+  }
+
+  .btn_icon:hover {
+    @apply bg-gray-100 text-gray-800;
+  }
+
+  .btn_icon:focus-visible {
+    @apply focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-3 focus-visible:ring-offset-gray-200;
   }
 }

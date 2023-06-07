@@ -1,3 +1,5 @@
+import colors from "tailwindcss/colors";
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -6,6 +8,9 @@ export default {
       animation: {
         loadingCircle: "loadingRotate 2s linear infinite",
         loadingPath: "loadingDash 1.5s ease-in-out infinite",
+      },
+      fontFamily: {
+        sans: "'Urbanist', sans-serif",
       },
       keyframes: {
         loadingDash: {
@@ -28,8 +33,8 @@ export default {
           },
         },
       },
-      fontFamily: {
-        sans: "'Urbanist', sans-serif",
+      ringOffsetWidth: {
+        3: "3px",
       },
     },
   },

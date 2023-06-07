@@ -11,10 +11,7 @@ const ModalHeader = ({ children, onClose }: Props) => {
     <div className="mb-3 flex items-center justify-between px-8 pt-6">
       <Dialog.Title className="text-2xl">{children}</Dialog.Title>
       {onClose && (
-        <button
-          className="flex h-8 w-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-800"
-          onClick={onClose}
-        >
+        <button className="btn_icon" onClick={onClose}>
           <svg
             color="currentcolor"
             fill="none"

@@ -1,0 +1,14 @@
+.error_screen h1,
+h2,
+h3,
+h4 {
+  @apply text-lg text-gray-800;
+}
+
+.error_screen p {
+  @apply text-base text-gray-600;
+}
+
+.error_screen a {
+  @apply text-orange-700;
+}

@@ -7,20 +7,11 @@ interface Props {
   label?: string;
   name?: string;
   onChange?: (evt: ChangeEvent<HTMLInputElement>) => void;
-  isReadOnly?: boolean;
   type?: HTMLInputTypeAttribute;
   value?: string | null;
 }
 
-const Input = ({
-  id,
-  isReadOnly = true,
-  label,
-  name,
-  onChange,
-  type = "text",
-  value,
-}: Props) => {
+const Input = ({ id, label, name, onChange, type = "text", value }: Props) => {
   return (
     <div className="grid gap-0.5">
       {label && (
@@ -33,7 +24,6 @@ const Input = ({
         id={id}
         name={name}
         onChange={onChange}
-        readOnly={isReadOnly}
         type={type}
         value={value || ""}
       />

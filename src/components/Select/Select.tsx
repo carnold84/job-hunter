@@ -1,16 +1,16 @@
 import { Listbox, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 
-interface Option {
+export interface SelectOption {
   id: string;
   name: string;
 }
 
 interface Props {
   label?: string;
-  onChange: (value: Option) => void;
-  options: Option[];
-  value?: Option;
+  onChange: (value: SelectOption) => void;
+  options: SelectOption[];
+  value?: SelectOption;
 }
 
 const Select = ({ label, onChange, options, value }: Props) => {
